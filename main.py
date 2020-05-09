@@ -1,12 +1,13 @@
 import pandas as pd
 import numpy as np
 import re
+import sys
 
 # -- init --
 # - file -
 # method 1:
 src = 'asset/博库3.4-4.2.xls'
-dst = 'sample1.xls'
+dst = 'sample1.xlsx'
 df = pd.read_excel(src)
 # method 2:
 ...
@@ -26,7 +27,7 @@ for TITLE in TITLES:
 
 # -- filter_function --
 # print 开头部分：\033[显示方式;前景色;背景色m + 结尾部分：\033[0m
-def print_color(*args, color=34, sep=' ', end='\n',):
+def print_color(*args, color=31, sep=' ', end='\n',):
     colors = {
         'black': 30,
         'red': 31,
@@ -58,7 +59,7 @@ def size_filter(item):  # 2.去除小于17cm或大于31cm开本的图书。
         else:
             return False
     except:
-        print_color('[size_filter]error:', item, color='red')
+        print_color('[size_filter]error:', item)
         return False
 
 
@@ -69,7 +70,7 @@ def lang_filter(item):  # 3.去除影印版，影印本，非中文图书。
         else:
             return False
     except:
-        print_color('[lang_filter]error:', item, color='red')
+        print_color('[lang_filter]error:', item)
         return False
 
 
@@ -83,7 +84,7 @@ def reader_filter(item):  # 5.去除读者对象含有幼儿，中小学，甚�
     except:
         if pd.isna(item):  # pd.isna > np.isnan
             return True
-        print_color('[reader_filter]error:', item, color='red')
+        print_color('[reader_filter]error:', item)
         return False
 
 
@@ -96,16 +97,18 @@ def page_filter(item):  # 9.去除小于50页的图书。
         else:
             return False
     except:
-        print_color('[page_filter]error:', item, color='red')
+        print_color('[page_filter]error:', item)
         return False
 
 
 def title_filter(item):
     for keyword in TITLE_KEYWORDS:
-        if keyword in value:
+        if keyword in item:
             return True
     return False
 
+def highlight_max(x):
+    return ['background-color: yellow' if title_filter(item) else '' for item in x]
 # -- main --
 
 
@@ -120,10 +123,12 @@ print(df.columns)
 # -- excel样式 --
 # method 2:
 # DataFrame.style：便于数据处理
-df.style.apply('color:Magenta', subset=[TITLE])
+df = df.style.apply(highlight_max,subset=[TITLE])
 
 # -- write --
 # 11.excel进去，出来还是个excel.
+print(df)
+print(type(df))
 df.to_excel(dst, index=False, encoding='gbk')
 
 """
