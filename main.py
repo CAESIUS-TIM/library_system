@@ -6,7 +6,7 @@ import sys
 # -- init --
 # - filePath -
 # method 1:
-src = r'asset\博库3.4-4.2.xls'
+src = r'asset\人天1.9-3.23.xls'
 dst = r'sample1.xlsx'  # Styler.to_excel
 # Styler只能导出excel且必须是xlsx
 path_PUBLISHER = r'asset\拟删除的出版社.xlsx'
@@ -269,17 +269,12 @@ def classno_highlighter(item):  # 13. 高亮显示“分类”中头字母为“
 
 def isvol_highlighter(item):  # 14. 高亮显示“卷册”I列中有“辑”字出现的图书的整行信息。
     # null
-    try:
-        if pd.isna(item):
-            return False
-        if '辑' in item:
-            return True
+    if pd.isna(item):
         return False
-    except:
-        if isinstance(item, int):
-            return False
-        print_color('Error[isvol_highlighter]:', item)
-        return False
+    if '辑' in item:
+        return True
+    return False
+
 
 
 def binding_highlighter(item):  # 15. 高亮显示“装帧”U列中...
